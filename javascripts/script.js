@@ -187,14 +187,28 @@ const animate = () => {
     }
     const platformDetectionRules = [
       player.position.x >= platform.position.x - player.width / 2,
-      player.position.x <= platform.position.x + player.height - player.width / 3,
+      player.position.x <= platform.position.x + platform.width - player.width / 3,
       player.position.y + player.height >= platform.position.y,
       player.position.y <= platform.position.y + platform.height,
     ];
 
     if(platformDetectionRules.every(rule => rule)){
       player.position.y = platform.position.y + player.height;
-      player.velocity.y = gravity
+      player.velocity.y = gravity;
+    }
+  });
+
+  checkpoints.forEach((checkpoint, index, checkpoints) => {
+    const checkpointDetectionRules = [
+      player.position.x >= checkpoint.position.x,
+      player.position.y >= checkpoint.position.y,
+      player.position.y + player.height <= checkpoint.position.y + checkpoint.height,
+      player.position.x - player.width <= checkpoint.position.x - checkpoint.claim.width + player.width * 0.9,
+      index === 0 || checkpoints[index - 1].claimed === true,
+    ];
+
+    if(checkpointDetectionRules.every(rule => rule)){
+      checkpoint.claim();
     }
   });
 
